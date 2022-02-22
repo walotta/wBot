@@ -1,6 +1,6 @@
 {
     "start":"registered your Telegram account in this bot, and begin to chat with her.",
     "help":"get some useful using help of this bot.",
-    "askIns":"If you are a SJTUer, you can use this command after you binding your student id.",
-    "stuId":"you can use this command to query your SJTU student id or binding one."
+    "askins":"If you are a SJTUer, you can use this command after you binding your student id.",
+    "stuid":"you can use this command to binding or reset your SJTU student id."
 }

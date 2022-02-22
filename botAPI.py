@@ -5,6 +5,7 @@ import hashlib
 import requests
 import time
 import threading
+import json
 
 def hash(msg):
     tmp=hashlib.sha256(str(msg).encode('utf-8'))
@@ -15,6 +16,7 @@ class tgBot:
     tokenFileName='token.encrypt'
     tokenHashFileName='token.hash'
     logFileName='bot.log'
+    cmdListFileName='command.json'
     proxies = { "http": "http://127.0.0.1:7890", "https": "http://127.0.0.1:7890",}
 
     def makePOST(self,method,info=None):
@@ -24,7 +26,7 @@ class tgBot:
         except:
             return 0,None
         if not retJson['ok']:
-            print('connect error!')
+            print('send POST error!')
             print(retJson)
             return 0,None
         return 1,retJson['result']
@@ -116,6 +118,7 @@ class tgBot:
                 elif retCode<1:
                     print('get message error!')
             self.addPlan([listen])
+            self.sendCommandList()
             print('tgBot {}({}) init finish!'.format(myInfo['id'],myInfo['username']))
 
     def getMe(self):
@@ -140,6 +143,22 @@ class tgBot:
         for p in self.planList:
             ret.append(p.is_alive())
         return ret
+
+    def sendCommandList(self):
+        cmdDict=dict()
+        with open(tgBot.cmdListFileName,'r') as f:
+            cmdDict=json.load(f)
+        sendList=[]
+        for c in cmdDict:
+            sendList.append({'command':c,'description':cmdDict[c]})
+        sendList=json.dumps(sendList)
+        retCode,ret=self.makePOST('setMyCommands',{'commands':sendList})
+        # r=requests.post('https://api.telegram.org/bot{}/{}'.format(self.token,'setMyCommands'), proxies=self.proxies, data={'commands':sendList})
+        # print(r.json())
+        if retCode==1 and ret:
+            print('upload cmd success of {}/{} item of cmds'.format(len(self.makePOST('getMyCommands')[1]),len(cmdDict)))
+        else:
+            print('upload cmd fail!')
 
     def unpackMessage(self,msg:dict):
         if 'message' in msg:

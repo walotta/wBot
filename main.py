@@ -7,7 +7,6 @@ from getZyIns import getInfo as getIns
 
 personDB=dict()
 dbName='personDb.npy'
-cmdListFileName='command.json'
 cmdDict=dict()
 statusDict=dict()
 def Init():
@@ -19,7 +18,7 @@ def Init():
         np.save(dbName,personDB)
     #init cmd JSON
     global cmdDict
-    with open(cmdListFileName,'r') as f:
+    with open(tgBot.cmdListFileName,'r') as f:
         cmdDict=json.load(f)
 
 def dbSave():
@@ -58,15 +57,15 @@ def dealCmd(bot:tgBot,id,info:str):
                 toSend.append('    /{:<7}: {}'.format(name,cmdDict[name]))
             toSend='\n'.join(toSend)
             bot.sendTEXT(id,toSend)
-        elif info=='/askIns':
+        elif info=='/askins':
             if 'stdId' not in personDB[id] or personDB[id]['stdId']==None:
                 queryStuId(bot,id)
             else:
                 retZyinsInfo(bot,id)
-        elif info=='/stuId':
+        elif info=='/stuid':
             queryStuId(bot,id)
     else:
-        bot.sendTEXT(id,"sorry I don't like this command...")
+        bot.sendTEXT(id,"sorry I'm afraid that I don't like this command...")
 
 def dealChat(bot:tgBot,id,info:str):
     global statusDict
