@@ -1,5 +1,6 @@
 from botAPI import tgBot
 import time
+import random
 import numpy as np
 import os
 import json
@@ -32,7 +33,8 @@ def haveStuId(bot:tgBot,id,info:str):
     dbSave()
     del statusDict[id]
     bot.sendTEXT(id,'wow, I have already bear your student id in my mind.')
-    bot.sendTEXT(id,'let me find out how many times of zyins you have already taken...')
+    bot.sendTEXT(id,"Now I can dive into your school's network to find out your personal information.")
+    bot.sendTEXT(id,'for example, let me find out how many times of zyins you have already taken...')
     retZyinsInfo(bot,id)
 
 def retZyinsInfo(bot:tgBot,id):
@@ -46,6 +48,35 @@ def queryStuId(bot:tgBot,id):
     global statusDict
     bot.sendTEXT(id,'may I have your SJTU student id?')
     statusDict[id]=haveStuId
+
+personRandlowDict=dict()
+def receiveRandomHigh(bot:tgBot,id,info:str):
+    high=0
+    try:
+        high=int(info)
+    except:
+        bot.sendTEXT(id,'you should only give me a number!')
+    else:
+        global personRandlowDict
+        low=personRandlowDict[id]
+        if low>high:
+            bot.sendTEXT(id,'you are so bad to give me a upside down number set, but I am a so smart bot that I will give you a number between them, lol')
+            low,high=high,low
+        bot.sendTEXT(id,'I think *{}* is a good number for now qwq'.format(random.randint(low,high)),parse_mode='MarkdownV2')
+        global statusDict
+        del statusDict[id]
+        del personRandlowDict[id]
+
+def receiveRandomLow(bot:tgBot,id,info:str):
+    global personRandlowDict
+    try:
+        personRandlowDict[id]=int(info)
+    except:
+        bot.sendTEXT(id,'you should only give me a number!')
+    else:
+        bot.sendTEXT(id,'give me the higher bound(include)')
+        global statusDict
+        statusDict[id]=receiveRandomHigh
 
 def dealCmd(bot:tgBot,id,info:str):
     if info[1:] in cmdDict:
@@ -64,6 +95,10 @@ def dealCmd(bot:tgBot,id,info:str):
                 retZyinsInfo(bot,id)
         elif info=='/stuid':
             queryStuId(bot,id)
+        elif info=='/randint':
+            bot.sendTEXT(id,'give me your random lower bound(include)')
+            global statusDict
+            statusDict[id]=receiveRandomLow
     else:
         bot.sendTEXT(id,"sorry I'm afraid that I don't like this command...")
 

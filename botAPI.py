@@ -162,6 +162,7 @@ class tgBot:
 
     def unpackMessage(self,msg:dict):
         if 'message' in msg:
+            print('get a new message at {}'.format(time.asctime( time.localtime(time.time()))))
             self.replyMessage(self,msg['message'])
         else:
             print('message type cannot deal with!')
