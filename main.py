@@ -4,7 +4,7 @@ import random
 import numpy as np
 import os
 import json
-from getZyIns import getInfo as getIns
+import getZyIns
 
 personDB=dict()
 dbName='personDb.npy'
@@ -38,9 +38,20 @@ def haveStuId(bot:tgBot,id,info:str):
     retZyinsInfo(bot,id)
 
 def retZyinsInfo(bot:tgBot,id):
-    retCode,ret=getIns(personDB[id]['stdId'])
+    retCode,ret=getZyIns.getInfo(personDB[id]['stdId'])
     if retCode==1:
         bot.sendTEXT(id,'your ins times is {}'.format(ret[1]))
+    else:
+        bot.sendTEXT(id,'I think maybe some error occur, I cannot find your info...')
+
+def retZyinsDetail(bot:tgBot,id):
+    retCode,info,detail=getZyIns.getDetail(personDB[id]['stdId'])
+    if retCode==1:
+        ret="I find your bound student id is *{0}*, your total zysalon times is *{1}*, among them, salon times is *{2}* while lecture is *{3}*\. what's more, the details are: "
+        ret=ret.format(*info)
+        retDetail='\n'.join(detail)
+        bot.sendTEXT(id,ret,parse_mode='MarkdownV2')
+        bot.sendTEXT(id,retDetail)
     else:
         bot.sendTEXT(id,'I think maybe some error occur, I cannot find your info...')
 
@@ -93,6 +104,11 @@ def dealCmd(bot:tgBot,id,info:str):
                 queryStuId(bot,id)
             else:
                 retZyinsInfo(bot,id)
+        elif info=='/insdetail':
+            if 'stdId' not in personDB[id] or personDB[id]['stdId']==None:
+                bot.sendTEXT(id,'I cannot find out your information before you tell me your SJTU student id, you can tell me with /stuid')
+            else:
+                retZyinsDetail(bot,id)
         elif info=='/stuid':
             queryStuId(bot,id)
         elif info=='/randint':

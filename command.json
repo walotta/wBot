@@ -1,7 +1,8 @@
 {
     "start":"registered your Telegram account in my database, and begin to chat with me.",
     "help":"get some useful using help of me.",
+    "randint":"I can give you a randint between [a,b].",
     "askins":"If you are a SJTUer, you can use this command after you binding your student id.",
-    "stuid":"you can use this command to binding or reset your SJTU student id.",
-    "randint":"I can give you a randint between [a,b]."
+    "insdetail":"give you more details about your zyins",
+    "stuid":"you can use this command to binding or reset your SJTU student id."
 }
