@@ -29,13 +29,18 @@ def dbSave():
 def haveStuId(bot:tgBot,id,info:str):
     global personDB
     global statusDict
-    personDB[id]['stdId']=info
-    dbSave()
-    del statusDict[id]
-    bot.sendTEXT(id,'wow, I have already bear your student id in my mind.')
-    bot.sendTEXT(id,"Now I can dive into your school's network to find out your personal information.")
-    bot.sendTEXT(id,'for example, let me find out how many times of zyins you have already taken...')
-    retZyinsInfo(bot,id)
+    try:
+        info=int(info)
+    except:
+        bot.sendTEXT(id,"It's so funny that your student id is not a number, I think you should give me a new one")
+    else:
+        personDB[id]['stdId']=info
+        dbSave()
+        del statusDict[id]
+        bot.sendTEXT(id,'wow, I have already bear your student id in my mind.')
+        bot.sendTEXT(id,"Now I can dive into your school's network to find out your personal information.")
+        bot.sendTEXT(id,'for example, let me find out how many times of zyins you have already taken...')
+        retZyinsInfo(bot,id)
 
 def retZyinsInfo(bot:tgBot,id):
     retCode,ret=getZyIns.getInfo(personDB[id]['stdId'])
